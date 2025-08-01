@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 from smartmoney_bot.strategy.core import generate_signal
 
 

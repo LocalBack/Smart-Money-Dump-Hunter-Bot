@@ -1,0 +1,21 @@
+name: live-guard
+on:
+  workflow_dispatch:
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose -f docker-compose.staging.yml up -d
+      - run: |
+          sleep 60
+          curl -f http://localhost:${{ env.PROM_PORT }}/metrics
+          grep "MODE=paper" docker compose logs orchestrator
+      - run: docker compose down
+  gate:
+    needs: dry-run
+    if: success()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Approve Live Deploy
+        run: echo "Manual approval required via GitHub UI."

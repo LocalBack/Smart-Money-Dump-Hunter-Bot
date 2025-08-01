@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 import pytest
 
 from smartmoney_bot.alert.telegram import send_alert

@@ -114,3 +114,14 @@ Import the dashboard from `docker/grafana-dashboard.json`.
 4. Chaos scripts in `scripts/chaos` simulate outages. Execute them and review
    container logs to verify recovery.
 
+## Going Live
+
+1. Copy `env/.env.live.example` to `/opt/bot/.env.live` and add your real API keys.
+2. Whitelist your server IP in the [Binance API key settings](https://www.binance.com/en/support/faq/360002502072).
+3. Trigger the `live-guard` workflow in GitHub and approve the deploy gate.
+4. Start the service with:
+
+   ```bash
+   sudo systemctl enable --now orchestrator
+   ```
+

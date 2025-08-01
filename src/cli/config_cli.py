@@ -5,11 +5,14 @@ import shutil
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+import asyncio
+from redis import asyncio as aioredis
 
 import typer
 import yaml
 
 from smartmoney_bot.common.config import Settings
+from smartmoney_bot.risk.killswitch import unhalt as ks_unhalt
 
 app = typer.Typer(help="SmartMoney Bot CLI")
 config_app = typer.Typer()
@@ -124,3 +127,10 @@ def apply() -> None:
         shutil.copy(LIVE_FILE, HISTORY_DIR / f"live_{ts}.yml")
     shutil.move(STAGING_FILE, LIVE_FILE)
     typer.echo("Applied configuration")
+
+
+@app.command("unhalt")
+def unhalt_cli(passphrase: str) -> None:
+    """Clear the kill-switch flag."""
+    redis = aioredis.from_url(Settings().collector.redis_url, decode_responses=True)
+    asyncio.run(ks_unhalt(redis, passphrase))

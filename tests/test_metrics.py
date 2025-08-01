@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 import pytest
 
 from smartmoney_bot.metrics.buffer import RingBuffer

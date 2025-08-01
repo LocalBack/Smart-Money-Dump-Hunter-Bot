@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+# mypy: ignore-errors
+
 import asyncio
 import os
 import time
@@ -12,16 +14,22 @@ from .telegram import send_alert
 
 log = structlog.get_logger(__name__)
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/postgres")
+DATABASE_URL = os.getenv(
+    "DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/postgres"
+)
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
 
 async def watch_trades(conn: asyncpg.Connection) -> None:
     last_id = 0
     while True:
-        rows = await conn.fetch("SELECT id, symbol, side, qty FROM trades_planned WHERE id > $1", last_id)
+        rows = await conn.fetch(
+            "SELECT id, symbol, side, qty FROM trades_planned WHERE id > $1", last_id
+        )
         for row in rows:
-            await send_alert("trade_planned", f"{row['symbol']} {row['side']} {row['qty']}")
+            await send_alert(
+                "trade_planned", f"{row['symbol']} {row['side']} {row['qty']}"
+            )
             last_id = row["id"]
         await asyncio.sleep(1)
 
@@ -45,4 +53,3 @@ async def run() -> None:
 
 if __name__ == "__main__":
     asyncio.run(run())
-

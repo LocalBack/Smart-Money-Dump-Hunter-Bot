@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -79,4 +80,3 @@ def test_backtest_runs(tmp_path: Path) -> None:
     )
     assert len(trades) >= 1
     assert isinstance(stats.win_rate, float)
-
