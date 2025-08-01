@@ -87,3 +87,15 @@ poetry run bot tune 2024-01-01 2025-07-31 --symbols BTCUSDT ETHUSDT --n_trials 1
 
 When executed from a CRON job with the `--apply` flag, the tuner writes the best
 parameter set to `config/staging.yml` which can then be reviewed and applied.
+
+## Running the stack locally
+
+To bring up all services run:
+
+```bash
+docker compose up
+```
+
+Grafana is available on [http://localhost:3000](http://localhost:3000) (default `admin/admin`).
+Import the dashboard from `docker/grafana-dashboard.json`.
+

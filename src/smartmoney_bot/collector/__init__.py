@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
-from typing import List, TypedDict
+from typing import Any, AsyncIterator, List, TypedDict
 
 import aiohttp
 import structlog
@@ -20,7 +20,7 @@ class Message(TypedDict):
     ts: int
     symbol: str
     feed: str
-    payload: dict
+    payload: dict[str, Any]
 
 
 class Collector:
@@ -59,7 +59,7 @@ class Collector:
                 dict(Message(ts=ts, symbol=symbol, feed="liquidation", payload=msg)),
             )
 
-    async def _ws_iter(self, url: str, key: str | None = None):
+    async def _ws_iter(self, url: str, key: str | None = None) -> AsyncIterator[Any]:
         backoff = 1
         while not self.stop_event.is_set():
             try:

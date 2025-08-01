@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+from typing import cast
 
 import aiohttp
 
@@ -16,7 +17,7 @@ async def fetch_top50(
         if not cache_path:
             raise ValueError("cache_path required when using cache")
         with cache_path.open("r") as f:
-            return json.load(f)
+            return cast(list[str], json.load(f))
 
     url = "https://api.coingecko.com/api/v3/coins/markets"
     params = {

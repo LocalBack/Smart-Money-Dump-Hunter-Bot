@@ -4,6 +4,7 @@ import asyncio
 import json
 import time
 from collections import defaultdict
+from typing import Any, cast
 
 import structlog
 from redis.asyncio import Redis
@@ -46,7 +47,7 @@ async def engine_task() -> None:
         start = time.time()
         for _, msgs in res:
             for _id, fields in msgs:
-                data = json.loads(fields[b"data"])  # type: ignore[index]
+                data = cast(dict[str, Any], json.loads(fields[b"data"]))
                 if data["feed"] != "kline":
                     continue
                 k = data["payload"]["k"]
