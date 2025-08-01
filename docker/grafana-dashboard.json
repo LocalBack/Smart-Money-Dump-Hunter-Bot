@@ -1,0 +1,10 @@
+{
+  "dashboard": {
+    "title": "SmartMoney Overview",
+    "panels": [
+      {"type": "graph", "title": "Trades", "targets": [{"expr": "orders_sent_total"}]},
+      {"type": "graph", "title": "PnL", "targets": [{"expr": "account_pnl"}]},
+      {"type": "graph", "title": "Latency", "targets": [{"expr": "orchestrator_latency_ms"}]}
+    ]
+  }
+}

@@ -32,7 +32,7 @@ services:
   prometheus:
     image: prom/prometheus
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
   grafana:
@@ -40,4 +40,11 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./docker/grafana-dashboard.json:/etc/grafana/provisioning/dashboard.json
+  alertbot:
+    build: .
+    environment:
+      SERVICE: alert.alertbot
+    depends_on:
+      - redis
+      - postgres
