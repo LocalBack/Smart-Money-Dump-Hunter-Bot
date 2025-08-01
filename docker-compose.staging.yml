@@ -1,0 +1,43 @@
+version: "3"
+services:
+  redis:
+    extends:
+      file: docker-compose.yml
+      service: redis
+  postgres:
+    extends:
+      file: docker-compose.yml
+      service: postgres
+  collector:
+    extends:
+      file: docker-compose.yml
+      service: collector
+    environment:
+      BINANCE_BASE_WS_URL: "wss://testnet.binance.vision/stream?streams="
+      BINANCE_LIQUIDATION_STREAM: "wss://testnet.binance.vision/ws/!forceOrder@arr"
+      BINANCE_TICKER_STREAM: "wss://testnet.binance.vision/ws/!miniTicker@arr"
+  metrics:
+    extends:
+      file: docker-compose.yml
+      service: metrics
+  orchestrator:
+    extends:
+      file: docker-compose.yml
+      service: orchestrator
+  prometheus:
+    extends:
+      file: docker-compose.yml
+      service: prometheus
+    command:
+      - '--storage.tsdb.retention.time=15d'
+  grafana:
+    extends:
+      file: docker-compose.yml
+      service: grafana
+  alertbot:
+    extends:
+      file: docker-compose.yml
+      service: alertbot
+
+env_file:
+  - env/.env.staging

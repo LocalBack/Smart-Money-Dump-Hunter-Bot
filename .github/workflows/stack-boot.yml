@@ -1,0 +1,20 @@
+name: Stack Boots
+
+on:
+  pull_request:
+  schedule:
+    - cron: '0 4 * * *'
+
+jobs:
+  boot:
+    runs-on: ubuntu-latest
+    env:
+      PROM_PORT: 9090
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose -f docker-compose.staging.yml up -d
+      - run: sleep 120
+      - run: |
+          curl -f http://localhost:${PROM_PORT}/metrics
+          docker compose logs orchestrator | grep "Strategy alive"
+      - run: docker compose down
