@@ -11,6 +11,7 @@ from redis.asyncio import Redis
 from .binance_ws import LIQUIDATION_STREAM, TICKER_STREAM, kline_stream_url
 from .config import Config
 from .redispub import publish
+from .universe import fetch_top50
 
 logger = structlog.get_logger(__name__)
 
@@ -20,21 +21,6 @@ class Message(TypedDict):
     symbol: str
     feed: str
     payload: dict
-
-
-async def fetch_universe(limit: int) -> List[str]:
-    url = "https://api.coingecko.com/api/v3/coins/markets"
-    params = {
-        "vs_currency": "usd",
-        "order": "market_cap_desc",
-        "per_page": str(limit),
-        "page": "1",
-        "sparkline": "false",
-    }
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url, params=params) as resp:
-            data = await resp.json()
-    return [item["symbol"].upper() + "USDT" for item in data]
 
 
 class Collector:
@@ -93,7 +79,7 @@ class Collector:
 
     async def run(self) -> None:
         self.redis = Redis.from_url(self.cfg.redis_url)
-        symbols = await fetch_universe(self.cfg.coin_limit)
+        symbols = await fetch_top50()
         logger.info("universe", count=len(symbols))
         tasks = [
             self._ticker_ws(self.redis),
