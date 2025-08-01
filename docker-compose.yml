@@ -1,4 +1,4 @@
-version: "3"
+version: "3.9"
 services:
   redis:
     image: redis:7
@@ -13,19 +13,19 @@ services:
   collector:
     build: .
     environment:
-      SERVICE: collector.collector_service
+      SERVICE: smartmoney_bot.collector.collector_service
     depends_on:
       - redis
   metrics:
     build: .
     environment:
-      SERVICE: metrics.metric_engine
+      SERVICE: smartmoney_bot.metrics.metric_engine
     depends_on:
       - redis
   orchestrator:
     build: .
     environment:
-      SERVICE: orchestrator.engine
+      SERVICE: smartmoney_bot.orchestrator.engine
     depends_on:
       - redis
       - postgres
@@ -44,7 +44,7 @@ services:
   alertbot:
     build: .
     environment:
-      SERVICE: alert.alertbot
+      SERVICE: smartmoney_bot.alert.alertbot
     depends_on:
       - redis
       - postgres
