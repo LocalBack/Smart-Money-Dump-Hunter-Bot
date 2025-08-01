@@ -20,7 +20,7 @@ class Message(TypedDict):
     ts: int
     symbol: str
     feed: str
-    payload: dict[str, Any]
+    payload: list[str, Any]
 
 
 class Collector:
@@ -31,11 +31,14 @@ class Collector:
 
     async def _ticker_ws(self, redis: Redis) -> None:
         async for msg in self._ws_iter(TICKER_STREAM):
-            ts = int(float(msg["E"]))
-            symbol = msg["s"]
-            await publish(
-                redis,
-                dict(Message(ts=ts, symbol=symbol, feed="ticker", payload=msg)),
+            #print("Gelen msg:", msg, type(msg)) #DEBUG
+            for item in msg:
+
+                ts = int(float(item["E"]))
+                symbol = item["s"]
+                await publish(
+                    redis,
+                    dict(Message(ts=ts, symbol=symbol, feed="ticker", payload=msg)),
             )
 
     async def _kline_ws(self, redis: Redis, symbols: List[str]) -> None:
