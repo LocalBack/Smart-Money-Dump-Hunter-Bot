@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import difflib
 import shutil
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -119,7 +119,7 @@ def apply() -> None:
         typer.echo("Nothing to apply")
         raise typer.Exit()
     HISTORY_DIR.mkdir(parents=True, exist_ok=True)
-    ts = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     if LIVE_FILE.exists():
         shutil.copy(LIVE_FILE, HISTORY_DIR / f"live_{ts}.yml")
     shutil.move(STAGING_FILE, LIVE_FILE)

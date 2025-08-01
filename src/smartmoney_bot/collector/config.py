@@ -7,13 +7,13 @@ from dotenv import load_dotenv
 
 @dataclass(slots=True)
 class Config:
-    redis_url: str = "redis://localhost:6379/0"
+    redis_url: str = "redis://redis:6379/0"
     coin_limit: int = 50
 
 
 def from_env() -> Config:
     load_dotenv()
     return Config(
-        redis_url=os.getenv("REDIS_URL", "redis://localhost:6379/0"),
+        redis_url=os.getenv("REDIS_URL", "redis://redis:6379/0"),
         coin_limit=int(os.getenv("COIN_LIMIT", "50")),
     )

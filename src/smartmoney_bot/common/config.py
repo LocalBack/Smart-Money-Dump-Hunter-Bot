@@ -14,12 +14,12 @@ except Exception:  # pragma: no cover - fallback if pydantic stubs missing
 
 
 class CollectorConfig(BaseModel):
-    redis_url: str = Field(default="redis://localhost:6379/0")
+    redis_url: str = Field(default="redis://redis:6379/0")
     coin_limit: int = Field(default=50)
 
 
 class MetricsConfig(BaseModel):
-    redis_url: str = Field(default="redis://localhost:6379/0")
+    redis_url: str = Field(default="redis://redis:6379/0")
     buffer_size: int = Field(default=1440)
     atr_period: int = Field(default=14)
 
