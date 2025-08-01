@@ -27,6 +27,7 @@ class AccountState:
 
 @dataclass(slots=True)
 class OrderPlan:
+    symbol: str
     qty: float
     entry_price: float
     sl_price: float
@@ -60,6 +61,7 @@ def vet_and_size(
         return None
 
     return OrderPlan(
+        symbol=signal.symbol,
         qty=qty,
         entry_price=signal.entry_price,
         sl_price=signal.sl_price,
