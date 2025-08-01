@@ -65,3 +65,25 @@ Example stats output:
 | win_rate | avg_R | profit_factor | max_dd | tail_ratio |
 |---------:|------:|--------------:|------:|-----------:|
 | 0.55 | 2.1 | 1.7 | 0.12 | 1.5 |
+
+## Tuning & Config
+
+The `bot` CLI manages configuration and parameter tuning. Example commands:
+
+```bash
+# inspect current config
+poetry run bot config view
+
+# change a value
+poetry run bot config set collector.coin_limit 25
+
+# preview and apply
+poetry run bot config diff
+poetry run bot config apply
+
+# run hyper-parameter tuning
+poetry run bot tune 2024-01-01 2025-07-31 --symbols BTCUSDT ETHUSDT --n_trials 100
+```
+
+When executed from a CRON job with the `--apply` flag, the tuner writes the best
+parameter set to `config/staging.yml` which can then be reviewed and applied.
