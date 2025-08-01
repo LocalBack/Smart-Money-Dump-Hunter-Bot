@@ -1,0 +1,16 @@
+{
+  "dashboard": {
+    "title": "Orchestrator Latency",
+    "panels": [
+      {
+        "type": "graph",
+        "title": "Latency ms",
+        "targets": [
+          {
+            "expr": "orchestrator_latency_ms"
+          }
+        ]
+      }
+    ]
+  }
+}

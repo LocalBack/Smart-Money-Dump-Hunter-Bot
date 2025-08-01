@@ -20,12 +20,12 @@ For the full architecture and strategy rationale see the `Strategy & Implementat
 src/               # application packages
   collector/       # market data collector micro-service
   metrics/         # metric computation engine
-  strategy/        # trading logic (placeholder)
-  risk/            # risk management (placeholder)
+  strategy/        # trading logic
+  risk/            # risk management
   exec/            # order execution (placeholder)
-  backtest/        # backtesting tools (placeholder)
+  backtest/        # backtesting tools
   common/          # shared utilities (placeholder)
- tests/             # pytest suite
+tests/             # pytest suite
 ```
 
 ## Running the Metric Engine
@@ -51,3 +51,17 @@ Start the engine with:
 ```bash
 docker compose up metrics
 ```
+
+## Backtesting
+
+Run the simulator over historical parquet data:
+
+```bash
+poetry run backtest --symbols BTCUSDT SOLUSDT --from 2023-01-01 --to 2025-07-31
+```
+
+Example stats output:
+
+| win_rate | avg_R | profit_factor | max_dd | tail_ratio |
+|---------:|------:|--------------:|------:|-----------:|
+| 0.55 | 2.1 | 1.7 | 0.12 | 1.5 |
