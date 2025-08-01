@@ -18,3 +18,4 @@ def test_vet_and_size() -> None:
     assert plan is not None
     assert plan.qty == 10.0
     assert plan.symbol == "TEST"
+
