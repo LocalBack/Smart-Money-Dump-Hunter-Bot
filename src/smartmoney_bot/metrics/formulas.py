@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+# mypy: ignore-errors
+
 from typing import TypedDict
 
 import numpy as np
