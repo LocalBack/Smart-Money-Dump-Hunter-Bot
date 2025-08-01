@@ -10,6 +10,7 @@ import structlog
 
 from ..common.config import settings
 from ..exec import gateway
+from ..common.async_utils import wait_for_postgres, wait_for_redis
 from ..metrics.formulas import Metrics
 from ..risk.manager import AccountState, PositionParams, vet_and_size
 from ..strategy.core import generate_signal
@@ -67,15 +68,12 @@ async def process_once(
 
 async def run_orchestrator() -> None:
     redis_url = os.getenv("REDIS_URL", "redis://redis:6379/0")
-    redis: aioredis.Redis = cast(
-        aioredis.Redis,
-        aioredis.from_url(redis_url, decode_responses=True),  # type: ignore[no-untyped-call]
-    )
+    redis = await wait_for_redis(redis_url)
     try:
         await redis.xgroup_create("market.metrics", "orchcg", id="$", mkstream=True)
     except Exception:  # pragma: no cover - group may exist
         pass
-    conn = await asyncpg.connect(DATABASE_URL)
+    conn = await wait_for_postgres(DATABASE_URL)
     await conn.execute(
         """
         CREATE TABLE IF NOT EXISTS trades_planned (
@@ -94,3 +92,7 @@ async def run_orchestrator() -> None:
     params = PositionParams(risk_pct=1.0, max_dd_pct=50.0, daily_stop=1_000.0)
     while True:
         await process_once(redis, conn, account, params)
+
+
+if __name__ == "__main__":
+    asyncio.run(run_orchestrator())
