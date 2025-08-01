@@ -1,0 +1,38 @@
+[project]
+name = "smartmoney-bot"
+version = "0.1.0"
+description = "Smart-Money Dump-Hunter"
+authors = [
+    {name = "OpenAI Codex"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aiohttp (>=3.12.15,<4.0.0)",
+    "websockets (>=15.0.1,<16.0.0)",
+    "aioredis (>=2.0,<3.0)",
+    "structlog (>=25.4.0,<26.0.0)",
+    "python-dotenv (>=1.1.1,<2.0.0)",
+    "ccxt (>=4.4.97,<5.0.0)",
+    "redis (>=6.2.0,<7.0.0)"
+]
+
+[tool.poetry]
+package-mode = true
+packages = [
+    { include = "smartmoney_bot", from = "src" }
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+types-redis = "^4.6.0.20241004"
+pytest = "^8.4.1"
+pytest-asyncio = "^1.1.0"
+black = "^25.1.0"
+ruff = "^0.12.7"
+mypy = "^1.17.1"
+
