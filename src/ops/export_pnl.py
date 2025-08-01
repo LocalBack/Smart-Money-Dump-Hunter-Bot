@@ -14,7 +14,7 @@ from dateutil import parser
 async def export_pnl(start: datetime, end: datetime, outfile: str) -> None:
     """Export planned trades between start and end as CSV."""
     dsn = os.getenv(
-        "DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/postgres"
+        "DATABASE_URL", "postgresql://postgres:postgres@postgres:5432/postgres"
     )
     conn = await asyncpg.connect(dsn)
     rows = await conn.fetch(

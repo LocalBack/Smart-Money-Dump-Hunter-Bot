@@ -1,8 +1,9 @@
 from __future__ import annotations
+
 # mypy: ignore-errors
 
 import shutil
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable, cast
 
@@ -105,7 +106,7 @@ def tune(
     sampler = SobolTPESampler()
     study = optuna.create_study(direction="maximize", sampler=sampler)
     study.optimize(lambda t: _objective(t, symbols, data_dir), n_trials=n_trials)
-    ts = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     proposed_dir = Path("config/proposed")
     proposed_dir.mkdir(parents=True, exist_ok=True)
     proposed_file = proposed_dir / f"{ts}.yml"

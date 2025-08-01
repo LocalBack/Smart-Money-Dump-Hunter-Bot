@@ -12,8 +12,8 @@ from .telegram import send_alert
 
 log = structlog.get_logger(__name__)
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/postgres")
-REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@postgres:5432/postgres")
+REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
 
 
 async def watch_trades(conn: asyncpg.Connection) -> None:

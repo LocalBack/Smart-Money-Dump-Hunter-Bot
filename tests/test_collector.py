@@ -23,4 +23,4 @@ async def test_stream_insert(tmp_path) -> None:
     await publish(redis, msg)
     res = await redis.xrange(STREAM, count=1)
     assert res
-    await redis.close()
+    await redis.aclose()  # type: ignore[attr-defined]
