@@ -8,6 +8,7 @@ from typing import Any, cast
 
 import structlog
 from redis.asyncio import Redis
+from ..common.async_utils import wait_for_redis
 
 from .buffer import RingBuffer
 from .config import Config
@@ -21,7 +22,7 @@ GROUP = "metricscg"
 
 async def engine_task() -> None:
     cfg = Config()
-    redis = Redis.from_url(cfg.REDIS_URL)
+    redis = await wait_for_redis(cfg.REDIS_URL)
     try:
         await redis.xgroup_create(RAW_STREAM, GROUP, mkstream=True, id="$")
     except Exception:
@@ -88,3 +89,7 @@ async def engine_task() -> None:
 
 def run() -> None:
     asyncio.run(engine_task())
+
+
+if __name__ == "__main__":
+    run()
