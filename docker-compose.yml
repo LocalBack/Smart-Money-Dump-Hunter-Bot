@@ -1,0 +1,43 @@
+version: "3"
+services:
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+  collector:
+    build: .
+    environment:
+      SERVICE: collector.collector_service
+    depends_on:
+      - redis
+  metrics:
+    build: .
+    environment:
+      SERVICE: metrics.metric_engine
+    depends_on:
+      - redis
+  orchestrator:
+    build: .
+    environment:
+      SERVICE: orchestrator.engine
+    depends_on:
+      - redis
+      - postgres
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
