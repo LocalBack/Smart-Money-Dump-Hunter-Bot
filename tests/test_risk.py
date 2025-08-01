@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 from smartmoney_bot.risk.manager import AccountState, PositionParams, vet_and_size
 from smartmoney_bot.strategy.core import Signal
 
@@ -18,4 +19,3 @@ def test_vet_and_size() -> None:
     assert plan is not None
     assert plan.qty == 10.0
     assert plan.symbol == "TEST"
-

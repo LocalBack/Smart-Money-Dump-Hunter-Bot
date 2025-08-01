@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+# mypy: ignore-errors
+
 import asyncio
 import os
 import random

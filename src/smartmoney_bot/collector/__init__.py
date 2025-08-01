@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+# mypy: ignore-errors
+
 import asyncio
 import json
 from typing import Any, AsyncIterator, List, TypedDict

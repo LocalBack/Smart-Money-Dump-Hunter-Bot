@@ -30,4 +30,3 @@ async def send_alert(event: str, text: str) -> None:
     log.info(text, kind=event)
     stdlog.info(text)
     await send_message(f"[{event}] {text}")
-

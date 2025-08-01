@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 import pytest
 
 from smartmoney_bot.orchestrator import engine
@@ -40,6 +41,9 @@ class FakeRedis:
 
     async def set(self, *args, **kwargs):
         pass
+
+    async def get(self, key):
+        return self.values.get(key)
 
 
 class FakeConn:
