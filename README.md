@@ -99,3 +99,18 @@ docker compose up
 Grafana is available on [http://localhost:3000](http://localhost:3000) (default `admin/admin`).
 Import the dashboard from `docker/grafana-dashboard.json`.
 
+## Staging Soak
+
+1. Copy `env/.env.staging.example` to `env/.env.staging` and provide Binance
+   testnet API keys.
+2. Launch the soak stack:
+
+   ```bash
+   docker compose -f docker-compose.staging.yml up -d
+   ```
+
+3. Grafana runs at `http://localhost:3000` with the default `admin/admin`
+   credentials.
+4. Chaos scripts in `scripts/chaos` simulate outages. Execute them and review
+   container logs to verify recovery.
+

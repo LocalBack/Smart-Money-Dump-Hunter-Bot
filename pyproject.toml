@@ -47,4 +47,6 @@ mypy = "^1.17.1"
 pytest-benchmark = "^4.0.0"
 fakeredis = "^2.23.2"
 types-PyYAML = "^6.0.12"
+pytest-docker = "^3.2.3"
+python-dateutil = "^2.9.0"
 
