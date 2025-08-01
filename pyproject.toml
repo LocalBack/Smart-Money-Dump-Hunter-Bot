@@ -14,7 +14,9 @@ dependencies = [
     "structlog (>=25.4.0,<26.0.0)",
     "python-dotenv (>=1.1.1,<2.0.0)",
     "ccxt (>=4.4.97,<5.0.0)",
-    "redis (>=6.2.0,<7.0.0)"
+    "redis (>=6.2.0,<7.0.0)",
+    "pandas (>=2.2.0,<3.0.0)",
+    "numba (>=0.59.0,<1.0.0)"
 ]
 
 [tool.poetry]
@@ -35,4 +37,10 @@ pytest-asyncio = "^1.1.0"
 black = "^25.1.0"
 ruff = "^0.12.7"
 mypy = "^1.17.1"
+pytest-benchmark = "^4.0.0"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
 
