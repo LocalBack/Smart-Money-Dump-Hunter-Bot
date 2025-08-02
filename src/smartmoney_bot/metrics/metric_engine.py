@@ -78,14 +78,15 @@ async def engine_task() -> None:
                 last_minute[symbol] = minute
                 view = buf.view(cfg.BUFFER_SIZE if buf.full else buf.idx)
                 metrics = compute_all_metrics(view)
-                message = {
+                message: dict[str, Any] = {
                     "ts": ts,
                     "symbol": symbol,
-                    "metrics": metrics,
+                    "price": frame["price"],
+                    **metrics,
                 }
                 await redis.xadd(
                     METRIC_STREAM,
-                    {"data": json.dumps(message)},
+                    message,
                     maxlen=100000,
                     approximate=True,
                 )
