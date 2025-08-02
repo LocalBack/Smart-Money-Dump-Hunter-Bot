@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import os
 import time
-from typing import cast
+from typing import Any, cast
 
 from redis import asyncio as aioredis
 import asyncpg
@@ -37,16 +38,39 @@ async def process_once(
     if msgs:
         for _, entries in msgs:
             for entry_id, data in entries:
-                symbol = data.get("symbol", "")
-                price = float(data.get("price", 0.0))
-                metrics = cast(
-                    Metrics,
-                    {
-                        k: float(v)
-                        for k, v in data.items()
-                        if k not in {"symbol", "price"}
-                    },
-                )
+                payload: dict[str, Any]
+                if "data" in data:
+                    try:
+                        payload = json.loads(data["data"])
+                    except json.JSONDecodeError:
+                        log.warning("invalid metric payload", raw=data)
+                        await redis.xack("market.metrics", "orchcg", entry_id)
+                        continue
+                else:
+                    payload = dict(data)
+
+                # Flatten nested "metrics" dict if present
+                metrics_src = payload.get("metrics", {})
+                if isinstance(metrics_src, dict):
+                    payload.update(metrics_src)
+
+                symbol = payload.get("symbol", "")
+                price = float(payload.get("price", 0.0))
+
+                metrics_dict: dict[str, float] = {}
+                for k, v in payload.items():
+                    if k in {"symbol", "price", "ts", "metrics"}:
+                        continue
+                    try:
+                        metrics_dict[k] = float(v)  # type: ignore[arg-type]
+                    except (TypeError, ValueError):
+                        log.debug(
+                            "skipping non-numeric metric",
+                            key=k,
+                            value=v,
+                            type=type(v).__name__,
+                        )
+                metrics = cast(Metrics, metrics_dict)
                 sig = generate_signal(symbol, price, metrics)
                 if sig:
                     plan = vet_and_size(sig, account, params)
