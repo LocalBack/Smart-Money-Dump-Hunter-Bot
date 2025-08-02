@@ -51,5 +51,6 @@ pytest-docker = "^3.2.3"
 python-dateutil = "^2.9.0"
 
 [tool.poetry.scripts]
-bot = "smartmoney_bot.orchestrator.engine:main"
+bot = "cli.config_cli:app"
+orchestrator = "smartmoney_bot.orchestrator.engine:main"
 backtest = "smartmoney_bot.backtest.sim:cli"
