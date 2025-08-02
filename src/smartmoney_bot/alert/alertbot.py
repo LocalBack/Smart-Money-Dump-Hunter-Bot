@@ -6,6 +6,8 @@ import time
 
 from redis import asyncio as aioredis
 import asyncpg
+
+from ..common.async_utils import wait_for_postgres
 import structlog
 
 from .telegram import send_alert
@@ -39,7 +41,7 @@ async def watch_heartbeats(redis: aioredis.Redis) -> None:
 
 async def run() -> None:
     redis = aioredis.from_url(REDIS_URL, decode_responses=True)  # type: ignore[no-untyped-call]
-    conn = await asyncpg.connect(DATABASE_URL)
+    conn = await wait_for_postgres(DATABASE_URL)
     await asyncio.gather(watch_trades(conn), watch_heartbeats(redis))
 
 

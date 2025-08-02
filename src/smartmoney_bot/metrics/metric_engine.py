@@ -48,7 +48,14 @@ async def engine_task() -> None:
         start = time.time()
         for _, msgs in res:
             for _id, fields in msgs:
-                data = cast(dict[str, Any], json.loads(fields[b"data"]))
+                raw = fields.get("data")
+                if raw is None:
+                    raw = fields.get(b"data")
+                if raw is None:
+                    logger.warning("data field missing", fields=fields)
+                    await redis.xack(RAW_STREAM, GROUP, _id)
+                    continue
+                data = cast(dict[str, Any], json.loads(raw))
                 if data["feed"] != "kline":
                     continue
                 k = data["payload"]["k"]
