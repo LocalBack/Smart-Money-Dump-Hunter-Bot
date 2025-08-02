@@ -4,12 +4,16 @@ import asyncio
 import json
 import time
 from collections import defaultdict
+from datetime import datetime
+from pathlib import Path
 from typing import Any, cast
 
+import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
 import structlog
-from redis.asyncio import Redis
-from ..common.async_utils import wait_for_redis
 
+from ..common.async_utils import wait_for_redis
 from .buffer import RingBuffer
 from .config import Config
 from .formulas import compute_all_metrics
@@ -18,6 +22,22 @@ logger = structlog.get_logger(__name__)
 RAW_STREAM = "market.raw"
 METRIC_STREAM = "market.metrics"
 GROUP = "metricscg"
+
+
+def write_metrics_row(message: dict[str, Any], cfg: Config) -> None:
+    """Append metric row to a daily symbol parquet file."""
+
+    date_str = datetime.utcfromtimestamp(message["ts"] / 1000).strftime("%Y%m%d")
+    root = Path(cfg.PARQUET_DIR)
+    root.mkdir(parents=True, exist_ok=True)
+    file_path = root / f"minute_{date_str}_{message['symbol']}.parquet"
+
+    df = pd.DataFrame([message])
+    table = pa.Table.from_pandas(df, preserve_index=False)
+    if file_path.exists():
+        existing = pq.read_table(file_path)
+        table = pa.concat_tables([existing, table])
+    pq.write_table(table, file_path)
 
 
 async def engine_task() -> None:
@@ -90,6 +110,8 @@ async def engine_task() -> None:
                     maxlen=100000,
                     approximate=True,
                 )
+                if minute % cfg.WRITE_PERIOD == 0:
+                    write_metrics_row(message, cfg)
         latency = (time.time() - start) * 1000
         if latency > 400:
             logger.info("latency", ms=latency)
