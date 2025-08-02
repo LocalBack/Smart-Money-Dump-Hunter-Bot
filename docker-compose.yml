@@ -14,12 +14,16 @@ services:
     build: .
     environment:
       SERVICE: smartmoney_bot.collector.collector_service
+    volumes:
+      - ./parquets:/parquets
     depends_on:
       - redis
   metrics:
     build: .
     environment:
       SERVICE: smartmoney_bot.metrics.metric_engine
+    volumes:
+      - ./parquets:/parquets
     depends_on:
       - redis
   orchestrator:
