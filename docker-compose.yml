@@ -44,7 +44,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./docker/grafana-dashboard.jsondocker:/etc/grafana/provisioning/dashboard.json
+      - ./docker/grafana-dashboard.json:/etc/grafana/provisioning/dashboard.json
   alertbot:
     build: .
     environment:
