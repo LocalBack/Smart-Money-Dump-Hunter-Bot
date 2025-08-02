@@ -124,3 +124,6 @@ def apply() -> None:
         shutil.copy(LIVE_FILE, HISTORY_DIR / f"live_{ts}.yml")
     shutil.move(STAGING_FILE, LIVE_FILE)
     typer.echo("Applied configuration")
+
+if __name__ == "__main__":
+    app()
