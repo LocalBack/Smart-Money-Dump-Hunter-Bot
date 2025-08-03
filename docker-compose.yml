@@ -11,7 +11,10 @@ services:
     ports:
       - "5432:5432"
   collector:
+    image: smart-money-dump-hunter-bot-collector
     build: .
+    env_file:
+      - .env
     environment:
       SERVICE: smartmoney_bot.collector.collector_service
     volumes:
@@ -30,6 +33,8 @@ services:
     build: .
     environment:
       SERVICE: smartmoney_bot.orchestrator.engine
+    volumes:
+      - ./parquets:/parquets
     depends_on:
       - redis
       - postgres
