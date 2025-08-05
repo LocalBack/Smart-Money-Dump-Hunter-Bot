@@ -9,7 +9,7 @@ import structlog
 from redis.asyncio import Redis
 
 from .binance_ws import LIQUIDATION_STREAM, TICKER_STREAM, kline_stream_url
-from .config import Config
+from .config import Config, from_env
 from .redispub import publish
 from .universe import fetch_top50
 
@@ -31,7 +31,7 @@ class Collector:
 
     async def _ticker_ws(self, redis: Redis) -> None:
         async for msg in self._ws_iter(TICKER_STREAM):
-            #print("Gelen msg:", msg, type(msg)) #DEBUG
+            # print("Gelen msg:", msg, type(msg)) #DEBUG
             for item in msg:
 
                 ts = int(float(item["E"]))
@@ -39,7 +39,9 @@ class Collector:
                 await publish(
                     redis,
                     dict(Message(ts=ts, symbol=symbol, feed="ticker", payload=msg)),
+
                     maxlen=self.cfg.redis_maxlen,
+
                 )
 
     async def _kline_ws(self, redis: Redis, symbols: List[str]) -> None:
@@ -85,7 +87,7 @@ class Collector:
 
     async def run(self) -> None:
         self.redis = Redis.from_url(self.cfg.redis_url)
-        symbols = await fetch_top50()
+        symbols = await fetch_top50(limit=self.cfg.coin_limit)
         logger.info("universe", count=len(symbols))
         tasks = [
             self._ticker_ws(self.redis),
@@ -101,7 +103,7 @@ class Collector:
 
 
 def run() -> None:
-    cfg = Config()
+    cfg = from_env()
     collector = Collector(cfg)
     asyncio.run(collector.run())
 
