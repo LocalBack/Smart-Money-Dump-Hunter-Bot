@@ -52,6 +52,36 @@ Start the engine with:
 docker compose up metrics
 ```
 
+## Collector → Redis → Metric Engine → Parquet
+
+The core data pipeline streams raw market data from the `collector` into Redis
+and persists derived metrics to Parquet. The flow is:
+
+1. **Collector** – fetches tick data for a limited set of symbols and writes
+   each update to the `market.raw` Redis stream.
+2. **Metric Engine** – subscribes to `market.raw`, computes aggregates and
+   publishes them to `market.metrics` while periodically flushing snapshots to
+   Parquet files under `./parquets`.
+
+Example environment variables for a tiny local experiment:
+
+```bash
+export COIN_LIMIT=5            # track only five coins
+export REDIS_MAXLEN=50         # keep the last 50 entries per stream
+export PARQUET_WRITE_PERIOD=10 # write Parquet every 10 seconds
+```
+
+With these values you can run each service independently:
+
+```bash
+docker compose up redis
+docker compose up collector
+docker compose up metrics  # metric engine runs as a separate service
+```
+
+After a short while, Parquet files containing the computed metrics will appear
+in the `parquets/` directory.
+
 ## Backtesting
 
 Run the simulator over historical parquet data:
