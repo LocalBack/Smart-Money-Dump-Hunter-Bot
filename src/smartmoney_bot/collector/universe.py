@@ -9,21 +9,23 @@ import aiohttp
 
 
 async def fetch_top50(
+    limit: int = 50,
     use_cache: bool = False,
     cache_path: Path | None = None,
 ) -> list[str]:
-    """Fetch top 50 symbols from CoinGecko or load from cache."""
+    """Fetch top ``limit`` symbols from CoinGecko or load from cache."""
     if use_cache or os.getenv("COLLECTOR_OFFLINE"):
         if not cache_path:
             raise ValueError("cache_path required when using cache")
         with cache_path.open("r") as f:
-            return cast(list[str], json.load(f))
+            data = cast(list[str], json.load(f))
+        return data[:limit]
 
     url = "https://api.coingecko.com/api/v3/coins/markets"
     params = {
         "vs_currency": "usd",
         "order": "market_cap_desc",
-        "per_page": "50",
+        "per_page": str(limit),
         "page": "1",
         "sparkline": "false",
     }
@@ -33,4 +35,4 @@ async def fetch_top50(
     symbols = [item["symbol"].upper() + "USDT" for item in data]
     if cache_path:
         cache_path.write_text(json.dumps(symbols, indent=2))
-    return symbols
+    return symbols[:limit]

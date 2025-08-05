@@ -9,7 +9,9 @@ STREAM = "market.raw"
 MAXLEN = 100000
 
 
-async def publish(redis: Redis, message: Dict[str, Any]) -> None:
+async def publish(
+    redis: Redis, message: Dict[str, Any], *, maxlen: int = MAXLEN
+) -> None:
     await redis.xadd(
-        STREAM, {"data": json.dumps(message)}, maxlen=MAXLEN, approximate=True
+        STREAM, {"data": json.dumps(message)}, maxlen=maxlen, approximate=True
     )
