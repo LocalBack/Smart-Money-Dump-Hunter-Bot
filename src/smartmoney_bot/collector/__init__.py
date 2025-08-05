@@ -39,7 +39,8 @@ class Collector:
                 await publish(
                     redis,
                     dict(Message(ts=ts, symbol=symbol, feed="ticker", payload=msg)),
-            )
+                    maxlen=self.cfg.redis_maxlen,
+                )
 
     async def _kline_ws(self, redis: Redis, symbols: List[str]) -> None:
         url = kline_stream_url(symbols)
@@ -50,6 +51,7 @@ class Collector:
             await publish(
                 redis,
                 dict(Message(ts=ts, symbol=symbol, feed="kline", payload=msg)),
+                maxlen=self.cfg.redis_maxlen,
             )
 
     async def _liquidation_ws(self, redis: Redis) -> None:
@@ -60,6 +62,7 @@ class Collector:
             await publish(
                 redis,
                 dict(Message(ts=ts, symbol=symbol, feed="liquidation", payload=msg)),
+                maxlen=self.cfg.redis_maxlen,
             )
 
     async def _ws_iter(self, url: str, key: str | None = None) -> AsyncIterator[Any]:

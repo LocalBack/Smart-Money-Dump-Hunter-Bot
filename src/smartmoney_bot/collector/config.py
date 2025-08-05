@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 class Config:
     redis_url: str = "redis://redis:6379/0"
     coin_limit: int = 50
+    redis_maxlen: int = 100000
 
 
 def from_env() -> Config:
@@ -16,4 +17,5 @@ def from_env() -> Config:
     return Config(
         redis_url=os.getenv("REDIS_URL", "redis://redis:6379/0"),
         coin_limit=int(os.getenv("COIN_LIMIT", "50")),
+        redis_maxlen=int(os.getenv("REDIS_MAXLEN", "100000")),
     )
