@@ -15,7 +15,7 @@ except Exception:  # pragma: no cover - fallback if pydantic stubs missing
 
 class CollectorConfig(BaseModel):
     redis_url: str = Field(default="redis://redis:6379/0")
-    coin_limit: int = Field(default=50)
+    coin_limit: int = Field(default=2)
 
 
 class MetricsConfig(BaseModel):
